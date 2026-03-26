@@ -2,15 +2,20 @@ import streamlit as st
 from datetime import datetime, timedelta
 import urllib.parse
 
-# 1. CONFIGURACIÓN DE PÁGINA (ESTO CAMBIA EL NOMBRE DEL ÍCONO)
+# 1. IDENTIDAD DE LA APP
 st.set_page_config(
-    page_title="ANALYTICA | Bio-Performance", 
+    page_title="ANALYTICA", 
     page_icon="📊", 
     layout="centered"
 )
 
-# Estilo visual Pro (Modo Oscuro)
+# Inyectar metadatos para móviles
 st.markdown("""
+    <head>
+        <title>ANALYTICA</title>
+        <meta name="apple-mobile-web-app-title" content="ANALYTICA">
+        <meta name="application-name" content="ANALYTICA">
+    </head>
     <style>
     .main { background-color: #0E1117; }
     div.stButton > button:first-child {
@@ -19,8 +24,6 @@ st.markdown("""
         border-radius: 10px;
         font-weight: bold;
     }
-    /* Estilo para que el título en el home screen se vea bien */
-    title { visibility: visible; }
     </style>
     """, unsafe_allow_html=True)
 
