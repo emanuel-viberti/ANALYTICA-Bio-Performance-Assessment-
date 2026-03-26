@@ -50,6 +50,21 @@ with st.sidebar:
     hora_gym = st.time_input("Hora de inicio")
 
 # --- LÓGICA DE RECOMENDACIÓN DINÁMICA ---
+# --- SIDEBAR ACTUALIZADO ---
+with st.sidebar:
+    st.header("Configuración")
+    sexo = st.radio("Sexo", ["Masculino", "Femenino"])
+    peso = st.number_input("Peso (kg)", 40.0, 150.0, 75.0)
+    talla = st.number_input("Talla (m)", 1.40, 2.10, 1.75)
+    brazo = st.number_input("Brazo Contraído (cm)", 15.0, 60.0, 32.0)
+    
+    st.write("---")
+    st.header("Tu Sesión")
+    tipo_entreno = st.selectbox("Tipo de entrenamiento", ["Pesas / Hipertrofia", "Running / HIIT", "Funcional / Crossfit"])
+    duracion = st.slider("Duración (minutos)", 30, 180, 60)
+    hora_gym = st.time_input("Hora de inicio")
+
+# --- LÓGICA DE RECOMENDACIÓN DINÁMICA ---
 # Ajustamos el mensaje según el tipo de entrenamiento
 if tipo_entreno == "Pesas / Hipertrofia":
     foco_pre = "Carbohidratos de bajo índice glucémico para energía sostenida."
@@ -68,6 +83,7 @@ st.write(f"Basado en una sesión de **{tipo_entreno}** de **{duracion} minutos**
 # Aquí mostrarías las cajas de Pre y Post entreno con los focos correspondientes
 st.info(f"**Pre-Entreno:** {foco_pre}\n\nOpciones recomendadas: {pre_entrenos[st.session_state.pre_idx]}")
 st.success(f"**Post-Entreno:** {foco_post}\n\nOpciones recomendadas: {post_entrenos[st.session_state.post_idx]}")
+
 
 
 # --- CÁLCULOS ---
