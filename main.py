@@ -149,3 +149,4 @@ mensaje_wa = f"Hola Emmanuel! Mi brazo ajustado dio {brazo_final:.1f} cm. Entren
 mensaje_encoded = urllib.parse.quote(mensaje_wa)
 whatsapp_url = f"https://wa.me/5491136768018?text={mensaje_encoded}"
 st.link_button("🔥 SOLICITAR ASESORÍA PERSONALIZADA", whatsapp_url, use_container_width=True)
+    
