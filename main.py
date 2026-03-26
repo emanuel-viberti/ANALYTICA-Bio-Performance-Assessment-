@@ -82,6 +82,19 @@ st.success(post_entrenos[st.session_state.post_idx])
 if st.button("🔄 Cambiar opción de Post-Entreno"):
     st.session_state.post_idx = (st.session_state.post_idx + 1) % len(post_entrenos)
     st.rerun()
+    
+# --- SECCIÓN DE RESPALDO CIENTÍFICO ---
+with st.expander("🔬 ¿Por qué medimos el brazo? (Base Científica)"):
+    st.write("""
+        Esta herramienta no utiliza el IMC convencional, ya que este no distingue entre grasa y músculo. 
+        En su lugar, aplicamos los **puntos de corte del estudio NHANES 2025** (*Costa-Pereira et al.*).
+        
+        **Puntos clave del método:**
+        1. **Precisión:** La circunferencia del brazo (MUAC) tiene una correlación del 70-80% con la masa muscular esquelética total.
+        2. **Ajuste por Grasa:** Aplicamos una corrección matemática según tu IMC para 'filtrar' el tejido adiposo y medir solo el tejido magro.
+        3. **Referencia:** Comparamos tu medida con una base de datos de más de 18.000 personas para determinar si estás en un rango de hipertrofia óptimo.
+    """)
+    st.caption("Fuente: Arm circumference as a marker of muscle mass: cutoff values from NHANES 1999–2006 (AJCN, 2025).")
 
 # --- BOTÓN WHATSAPP ---
 st.write("---")
