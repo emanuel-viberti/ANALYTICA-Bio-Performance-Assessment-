@@ -2,9 +2,14 @@ import streamlit as st
 from datetime import datetime, timedelta
 import urllib.parse
 
-# 1. CONFIGURACIÓN Y ESTILO PRO
-st.set_page_config(page_title="ANALYTICA | Bio-Performance", page_icon="📊")
+# 1. CONFIGURACIÓN DE PÁGINA (ESTO CAMBIA EL NOMBRE DEL ÍCONO)
+st.set_page_config(
+    page_title="ANALYTICA | Bio-Performance", 
+    page_icon="📊", 
+    layout="centered"
+)
 
+# Estilo visual Pro (Modo Oscuro)
 st.markdown("""
     <style>
     .main { background-color: #0E1117; }
@@ -14,6 +19,8 @@ st.markdown("""
         border-radius: 10px;
         font-weight: bold;
     }
+    /* Estilo para que el título en el home screen se vea bien */
+    title { visibility: visible; }
     </style>
     """, unsafe_allow_html=True)
 
