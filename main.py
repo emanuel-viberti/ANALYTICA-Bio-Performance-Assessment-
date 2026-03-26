@@ -1,5 +1,6 @@
 import streamlit as st
 from datetime import datetime, timedelta
+import urllib.parse
 
 # 1. CONFIGURACIÓN Y ESTILO
 st.set_page_config(page_title="ANALYTICA | Bio-Performance", page_icon="📊")
@@ -33,13 +34,11 @@ with st.sidebar:
     duracion = st.slider("Duración (minutos)", 30, 180, 60)
     hora_gym = st.time_input("Hora de inicio")
 
-# 3. LÓGICA DE HORARIOS
-# Convertimos hora_gym a objeto datetime para sumar/restar minutos
+# 3. LÓGICA DE HORARIOS Y PORCIONES
 dt_gym = datetime.combine(datetime.today(), hora_gym)
 hora_pre = (dt_gym - timedelta(minutes=90)).strftime("%H:%M")
 hora_post = (dt_gym + timedelta(minutes=duracion)).strftime("%H:%M")
 
-# 4. LÓGICA DE PORCIONES
 factor_duracion = 1.5 if duracion > 90 else (1.2 if duracion > 60 else 1.0)
 ratio_peso = peso / 70
 
@@ -64,12 +63,12 @@ recetas = {
     }
 }
 
-# 5. CÁLCULOS BIOMÉTRICOS
+# 4. CÁLCULOS BIOMÉTRICOS
 imc = peso / (talla**2)
 ajuste = 7.0 if imc >= 30 else (3.5 if imc >= 25 else 0)
 brazo_final = brazo - ajuste
 
-# 6. RESULTADOS BIOMÉTRICOS
+# 5. RESULTADOS
 st.write("---")
 col1, col2 = st.columns(2)
 col1.metric("IMC", f"{imc:.1f}")
@@ -80,7 +79,7 @@ if brazo_final >= (28 if sexo == "Masculino" else 25):
 else:
     st.warning("⚠️ Masa muscular por debajo del estándar óptimo.")
 
-# 7. RECOMENDACIÓN DE COMIDAS Y HORARIOS
+# 6. RECOMENDACIÓN DE COMIDAS
 st.write("---")
 st.subheader(f"🍴 Plan para {tipo_entreno}")
 st.caption(f"Ajustado para {duracion} min y {peso}kg de peso corporal.")
@@ -90,23 +89,31 @@ if 'idx' not in st.session_state: st.session_state.idx = 0
 opciones_pre = recetas[tipo_entreno]["pre"]
 opciones_post = recetas[tipo_entreno]["post"]
 
-# Bloque Pre-Entreno con Hora
 st.info(f"**Pre-Entreno (Consumir a las {hora_pre}):**\n\n{opciones_pre[st.session_state.idx % len(opciones_pre)]}")
-
-# Bloque Post-Entreno con Hora
 st.success(f"**Post-Entreno (Consumir a las {hora_post}):**\n\n{opciones_post[st.session_state.idx % len(opciones_post)]}")
 
 if st.button("🔄 Cambiar combinaciones"):
     st.session_state.idx += 1
     st.rerun()
 
-# 8. CIERRE CIENTÍFICO Y WHATSAPP
+# 7. BASE CIENTÍFICA COMPLETA
 st.write("---")
 with st.expander("🔬 ¿Por qué medimos el brazo? (Base Científica)"):
     st.write("""
-        Esta herramienta aplica los **puntos de corte del estudio NHANES 2025**.
-        La circunferencia del brazo ajustada por IMC es uno de los mejores predictores de masa muscular esquelética total.
+        Esta herramienta no utiliza el IMC convencional para evaluar músculo, ya que el peso total no distingue entre grasa y tejido magro. 
+        En su lugar, aplicamos los **puntos de corte del estudio NHANES 2025** (*Costa-Pereira et al.*).
+        
+        **Puntos clave del método:**
+        1. **Precisión:** La circunferencia del brazo (MUAC) tiene una correlación de hasta el 80% con la masa muscular esquelética total.
+        2. **Ajuste por Grasa:** Aplicamos una corrección matemática (-3.5cm o -7cm) según tu IMC para 'filtrar' el tejido adiposo y medir solo el tejido magro real.
+        3. **Referencia:** Comparamos tu medida con una base de datos de más de 18.000 personas para determinar si estás en un rango de hipertrofia saludable y funcional.
     """)
+    st.caption("Fuente: Arm circumference as a marker of muscle mass: cutoff values from NHANES 1999–2006 (AJCN, 2025).")
 
-whatsapp_url = "https://wa.me/5491136768018?text=Hola!%20Usé%20Analytica%20y%20quiero%20mejorar%20mi%20masa%20muscular."
+# 8. WHATSAPP INTELIGENTE
+# El mensaje incluirá los datos del usuario automáticamente
+mensaje_wa = f"Hola Emmanuel! Usé Analytica. Mi IMC es {imc:.1f} y mi brazo ajustado dio {brazo_final:.1f} cm. Entreno {tipo_entreno} y quiero un plan personalizado."
+mensaje_encoded = urllib.parse.quote(mensaje_wa)
+whatsapp_url = f"https://wa.me/5491136768018?text={mensaje_encoded}"
+
 st.link_button("🔥 SOLICITAR ASESORÍA 1-A-1", whatsapp_url, use_container_width=True)
