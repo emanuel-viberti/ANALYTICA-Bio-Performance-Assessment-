@@ -1,59 +1,89 @@
 import streamlit as st
-import pandas as pd
+import random
 
-# Configuración de página con estilo oscuro
+# Configuración de página
 st.set_page_config(page_title="ANALYTICA | Bio-Performance", page_icon="📊")
 
+# Estilo visual Pro
 st.markdown("""
     <style>
     .main { background-color: #0E1117; }
-    stButton>button { width: 100%; border-radius: 5px; height: 3em; background-color: #00FFC8; color: black; font-weight: bold; }
+    div.stButton > button:first-child {
+        background-color: #00FFC8;
+        color: black;
+        border-radius: 10px;
+        font-weight: bold;
+    }
     </style>
     """, unsafe_allow_html=True)
 
 st.title("ANALYTICA 📊")
-st.subheader("Evaluación de Masa Muscular (NHANES 2025)")
+st.caption("Nutrición Basada en Evidencia - Estándar NHANES 2025")
 
-# --- SECCIÓN DE ENTRADA ---
+# --- LISTAS DE COMIDAS ---
+pre_entrenos = [
+    "🍌 1 Banana madura + 1 puñado de frutos secos.",
+    "🍞 2 Tostadas integrales con miel y rodajas de fruta.",
+    "🥣 3 cdas de avena instantánea con leche y canela.",
+    "🍎 1 Manzana + 1 barrita de cereal de buena calidad."
+]
+
+post_entrenos = [
+    "🍗 1 Pechuga de pollo + 1 taza de arroz blanco + calabaza.",
+    "🍳 Omelette de 3 huevos + 1 lata de atún al natural + 1 tostada.",
+    "🍚 1 bife de cuadril magro + 1 papa mediana al horno.",
+    "🍦 Yogur natural descremado + 1 fruta + granola."
+]
+
+# --- SIDEBAR: DATOS ---
 with st.sidebar:
-    st.header("Datos Biométricos")
+    st.header("Configuración")
     sexo = st.radio("Sexo", ["Masculino", "Femenino"])
-    edad = st.number_input("Edad", 18, 80, 25)
     peso = st.number_input("Peso (kg)", 40.0, 150.0, 75.0)
     talla = st.number_input("Talla (m)", 1.40, 2.10, 1.75)
-    brazo = st.number_input("Perímetro de Brazo (cm)", 15.0, 60.0, 32.0)
-    
-    st.header("Entrenamiento")
-    hora_gym = st.time_input("Hora de inicio")
-    duracion = st.slider("Duración (min)", 30, 180, 90)
+    brazo = st.number_input("Brazo Contraído (cm)", 15.0, 60.0, 32.0)
+    hora_gym = st.time_input("Hora de inicio del Gym")
 
-# --- LÓGICA DEL PAPER ---
+# --- CÁLCULOS ---
 imc = peso / (talla**2)
-ajuste = 0
-if imc >= 30: ajuste = 7.0
-elif imc >= 25: ajuste = 3.5
+ajuste = 7.0 if imc >= 30 else (3.5 if imc >= 25 else 0)
+brazo_final = brazo - ajuste
 
-brazo_ajustado = brazo - ajuste
-
-# --- RESULTADOS ---
+# --- MOSTRAR RESULTADOS ---
 st.write("---")
 col1, col2 = st.columns(2)
 col1.metric("IMC", f"{imc:.1f}")
-col2.metric("Brazo Ajustado (Músculo)", f"{brazo_ajustado:.1f} cm")
+col2.metric("Brazo Ajustado", f"{brazo_final:.1f} cm")
 
-if brazo_ajustado >= 28 if sexo == "Masculino" else 25:
-    st.success("✅ Nivel de masa muscular adecuado según estándar NHANES.")
+# Mensaje de Diagnóstico
+if brazo_final >= (28 if sexo == "Masculino" else 25):
+    st.success("✅ Nivel de masa muscular adecuado.")
 else:
     st.warning("⚠️ Masa muscular por debajo del punto de corte óptimo.")
 
-# --- RECOMENDACIÓN TIMING ---
-st.subheader("🕒 Recomendación de Timing")
-st.info(f"**Pre-Entreno:** Priorizá carbohidratos complejos 90 min antes de las {hora_gym.strftime('%H:%M')}.")
-st.info(f"**Post-Entreno:** Ventana de recuperación proteica recomendada al finalizar.")
+# --- SECCIÓN DE COMIDAS CON BOTÓN DE INTERCAMBIO ---
+st.write("---")
+st.subheader("🕒 Recomendación según tu horario")
 
-# --- BOTÓN DE CONVERSIÓN WHATSAPP ---
-st.markdown("---")
-st.markdown("### 🚀 ¿Querés optimizar estos resultados?")
-st.write("Recibí un plan 100% personalizado basado en tu biometría.")
-whatsapp_url = "https://wa.me/TU_NUMERO_ACA?text=Hola!%20Usé%20Analytica%20y%20quiero%20mi%20plan%20personalizado."
-st.link_button("AGENDAR CONSULTA 1-A-1", whatsapp_url)
+# Inicializar estados de las comidas si no existen
+if 'pre_idx' not in st.session_state: st.session_state.pre_idx = 0
+if 'post_idx' not in st.session_state: st.session_state.post_idx = 0
+
+# Fila para Pre-Entreno
+st.markdown(f"**Pre-Entreno (90 min antes):**")
+st.info(pre_entrenos[st.session_state.pre_idx])
+if st.button("🔄 Cambiar opción de Pre-Entreno"):
+    st.session_state.pre_idx = (st.session_state.pre_idx + 1) % len(pre_entrenos)
+    st.rerun()
+
+# Fila para Post-Entreno
+st.markdown(f"**Post-Entreno (Al finalizar):**")
+st.success(post_entrenos[st.session_state.post_idx])
+if st.button("🔄 Cambiar opción de Post-Entreno"):
+    st.session_state.post_idx = (st.session_state.post_idx + 1) % len(post_entrenos)
+    st.rerun()
+
+# --- BOTÓN WHATSAPP ---
+st.write("---")
+whatsapp_url = "https://wa.me/5491136768018?text=Hola!%20Usé%20Analytica%20y%20quiero%20mejorar%20mi%20masa%20muscular."
+st.link_button("🔥 SOLICITAR ASESORÍA 1-A-1", whatsapp_url, use_container_width=True)
