@@ -158,3 +158,4 @@ with st.expander("🔬 Referencia y Puntos de Corte"):
 mensaje_wa = f"Hola Emmanuel! Mi CBA dio {brazo_final:.1f} cm. Entreno {tipo_entreno} y quiero un plan personalizado."
 mensaje_encoded = urllib.parse.quote(mensaje_wa)
 st.link_button("🔥 SOLICITAR ASESORÍA PERSONALIZADA", f"https://wa.me/5491136768018?text={mensaje_encoded}", use_container_width=True)
+    
