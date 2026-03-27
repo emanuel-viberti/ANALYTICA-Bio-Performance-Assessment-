@@ -65,7 +65,7 @@ else:
         st.balloons()
         st.info("🚀 **Alto Rendimiento:** Excelente desarrollo de tejido magro. Rendimiento deportivo de élite.")
 
-# 5. MENÚS (4 OPCIONES + REDONDEO)
+# 5. MENÚS
 dt_gym = datetime.combine(datetime.today(), hora_gym)
 hora_pre = (dt_gym - timedelta(minutes=90)).strftime("%H:%M")
 hora_post = (dt_gym + timedelta(minutes=duracion)).strftime("%H:%M")
@@ -84,7 +84,7 @@ recetas = {
             f"🍗 {round_5(150 * ratio_peso)}g de pollo + {round_5(200 * factor_dur)}g de arroz blanco.",
             f"🍳 Omelette de 3 huevos + 1 lata de atún + 2 rodajas de pan integral.",
             f"🥩 {round_5(150 * ratio_peso)}g de carne magra + {round_5(200 * factor_dur)}g de puré de papa.",
-            f"🍝 {round_5(100 * factor_dur)}g de fideos secos + {round_5(120 * ratio_peso)}g de carne picada."
+            f"🍝 {round_5(100 * factor_dur)}g de fideos secos + {round_5(120 * ratio_peso)}g de carne picada magra."
         ]
     },
     "Running / HIIT": {
@@ -130,7 +130,7 @@ if st.button("🔄 Ver otra opción de menú"):
     st.session_state.idx += 1
     st.rerun()
 
-# 6. BASE CIENTÍFICA CON TABLA DE CORTES
+# 6. BASE CIENTÍFICA
 st.write("---")
 with st.expander("🔬 Referencia y Puntos de Corte"):
     st.write("""
@@ -138,24 +138,18 @@ with st.expander("🔬 Referencia y Puntos de Corte"):
     
     ### Tabla de Referencia Muscular:
     """)
-    
     data = {
         "Nivel": ["Bajo el óptimo", "Nivel Adecuado", "Alto Rendimiento"],
         "Hombres (cm)": ["< 28.0", "28.0 - 32.0", "> 32.0"],
         "Mujeres (cm)": ["< 25.0", "25.0 - 29.0", "> 29.0"]
     }
     st.table(data)
-    
-    st.write("""
-    **Interpretación:**
-    - **Nivel Adecuado:** Estás en el rango de salud metabólica óptima.
-    - **Alto Rendimiento:** Posees una reserva de masa muscular superior, ideal para atletas o personas enfocadas en la hipertrofia.
-    - **Margen de Crecimiento:** Si estás en el nivel adecuado, tu objetivo es trabajar hacia el límite superior de tu rango para maximizar tu capacidad anabólica.
-    """)
-    st.caption("Fuente: Costa-Pereira et al. (AJCN, 2026). Análisis de población NHANES.")
+    st.write("**Margen de Crecimiento:** Si estás en el nivel adecuado, tu objetivo es trabajar hacia el límite superior para maximizar tu capacidad anabólica.")
+    st.caption("Fuente: Costa-Pereira et al. (AJCN, 2026).")
 
-# 7. WHATSAPP
-mensaje_wa = f"Hola Emmanuel! Mi CBA dio {brazo_final:.1f} cm. Entreno {tipo_entreno} y quiero un plan personalizado."
+# 7. WHATSAPP (CON NOMBRE CORREGIDO E IMC)
+mensaje_wa = f"Hola Emanuel! Usé Analytica. Mi IMC es {imc:.1f} y mi brazo ajustado (CBA) dio {brazo_final:.1f} cm. Entreno {tipo_entreno} y quiero un plan personalizado."
 mensaje_encoded = urllib.parse.quote(mensaje_wa)
-st.link_button("🔥 SOLICITAR ASESORÍA PERSONALIZADA", f"https://wa.me/5491136768018?text={mensaje_encoded}", use_container_width=True)
-    
+whatsapp_url = f"https://wa.me/5491136768018?text={mensaje_encoded}"
+
+st.link_button("🔥 SOLICITAR ASESORÍA PERSONALIZADA", whatsapp_url, use_container_width=True)
