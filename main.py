@@ -34,7 +34,7 @@ with st.sidebar:
     duracion = st.slider("Duración (minutos)", 30, 180, 60)
     hora_gym = st.time_input("Hora de inicio")
 
-# 3. LÓGICA DE CÁLCULO Y REDONDEO
+# 3. LÓGICA DE CÁLCULO
 imc = peso / (talla**2)
 ajuste = 7.0 if imc >= 30 else (3.5 if imc >= 25 else 0)
 brazo_final = brazo - ajuste
@@ -42,31 +42,30 @@ brazo_final = brazo - ajuste
 def round_5(x):
     return int(5 * round(float(x)/5))
 
-# 4. DIAGNÓSTICO DINÁMICO ESTRATIFICADO
+# 4. DIAGNÓSTICO ESTRATIFICADO
 st.write("---")
 col1, col2 = st.columns(2)
 col1.metric("IMC", f"{imc:.1f}")
 col2.metric("Brazo Ajustado", f"{brazo_final:.1f} cm")
 
-# Lógica de diagnóstico por niveles
 if sexo == "Masculino":
     if brazo_final < 28:
-        st.warning("⚠️ **Bajo el óptimo:** Se recomienda priorizar la ingesta proteica y el entrenamiento de fuerza.")
+        st.warning("⚠️ **Bajo el óptimo:** Tu masa muscular está por debajo del estándar de salud. ¡Hora de entrenar fuerte!")
     elif 28 <= brazo_final <= 32:
-        st.success("✅ **Nivel Adecuado:** Tu masa muscular es suficiente para una buena salud metabólica.")
+        st.success("✅ **Nivel Adecuado:** Tenés una base muscular saludable. ¡Hay margen para llegar al alto rendimiento!")
     else:
         st.balloons()
-        st.info("🚀 **Alto Rendimiento:** Tu desarrollo muscular es superior al promedio. ¡Excelente base anabólica!")
-else: # Femenino
+        st.info("🚀 **Alto Rendimiento:** ¡Nivel de hipertrofia sobresaliente! Estás en el rango superior de la población.")
+else:
     if brazo_final < 25:
-        st.warning("⚠️ **Bajo el óptimo:** Es fundamental fortalecer la masa muscular para proteger tu metabolismo.")
+        st.warning("⚠️ **Bajo el óptimo:** Fortalecer tu masa muscular ayudará a proteger tu salud metabólica.")
     elif 25 <= brazo_final <= 29:
-        st.success("✅ **Nivel Adecuado:** Posees una composición muscular saludable.")
+        st.success("✅ **Nivel Adecuado:** Composición muscular óptima. ¡Podés seguir escalando hacia la excelencia!")
     else:
         st.balloons()
-        st.info("🚀 **Alto Rendimiento:** Gran desarrollo de tejido magro. Óptimo para el rendimiento deportivo.")
+        st.info("🚀 **Alto Rendimiento:** Excelente desarrollo de tejido magro. Rendimiento deportivo de élite.")
 
-# 5. MENÚS (Siguen con 4 opciones y redondeo a 5g)
+# 5. MENÚS (4 OPCIONES + REDONDEO)
 dt_gym = datetime.combine(datetime.today(), hora_gym)
 hora_pre = (dt_gym - timedelta(minutes=90)).strftime("%H:%M")
 hora_post = (dt_gym + timedelta(minutes=duracion)).strftime("%H:%M")
@@ -131,22 +130,31 @@ if st.button("🔄 Ver otra opción de menú"):
     st.session_state.idx += 1
     st.rerun()
 
-# 6. BASE CIENTÍFICA EXTENDIDA
+# 6. BASE CIENTÍFICA CON TABLA DE CORTES
 st.write("---")
-with st.expander("🔬 ¿Por qué medimos el brazo? (Base Científica)"):
+with st.expander("🔬 Referencia y Puntos de Corte"):
     st.write("""
-    Esta herramienta aplica los **puntos de corte del estudio NHANES 2026** (*Costa-Pereira et al.*).
+    Esta herramienta utiliza la **Circunferencia de Brazo Ajustada (CBA)** basada en el estándar **NHANES 2026**. 
     
-    **Puntos clave del método:**
-    1. **Precisión:** La circunferencia del brazo (MUAC) tiene una correlación de hasta el 80% con la masa muscular esquelética total, siendo superior al IMC en contextos deportivos.
-    2. **Ajuste por Grasa:** Aplicamos una corrección matemática (-3.5cm o -7cm) según tu IMC para filtrar el tejido adiposo y obtener una métrica real de hipertrofia.
-    3. **Referencia:** Los datos se contrastan con una base de datos de más de 18.000 sujetos para determinar rangos de funcionalidad y salud metabólica.
+    ### Tabla de Referencia Muscular:
     """)
-    st.caption("Fuente: Arm circumference as a marker of muscle mass: NHANES (AJCN, 2026).")
+    
+    data = {
+        "Nivel": ["Bajo el óptimo", "Nivel Adecuado", "Alto Rendimiento"],
+        "Hombres (cm)": ["< 28.0", "28.0 - 32.0", "> 32.0"],
+        "Mujeres (cm)": ["< 25.0", "25.0 - 29.0", "> 29.0"]
+    }
+    st.table(data)
+    
+    st.write("""
+    **Interpretación:**
+    - **Nivel Adecuado:** Estás en el rango de salud metabólica óptima.
+    - **Alto Rendimiento:** Posees una reserva de masa muscular superior, ideal para atletas o personas enfocadas en la hipertrofia.
+    - **Margen de Crecimiento:** Si estás en el nivel adecuado, tu objetivo es trabajar hacia el límite superior de tu rango para maximizar tu capacidad anabólica.
+    """)
+    st.caption("Fuente: Costa-Pereira et al. (AJCN, 2026). Análisis de población NHANES.")
 
 # 7. WHATSAPP
-mensaje_wa = f"Hola Emmanuel! Mi brazo ajustado dio {brazo_final:.1f} cm. Entreno {tipo_entreno} y quiero un plan personalizado."
+mensaje_wa = f"Hola Emmanuel! Mi CBA dio {brazo_final:.1f} cm. Entreno {tipo_entreno} y quiero un plan personalizado."
 mensaje_encoded = urllib.parse.quote(mensaje_wa)
-whatsapp_url = f"https://wa.me/5491136768018?text={mensaje_encoded}"
-st.link_button("🔥 SOLICITAR ASESORÍA PERSONALIZADA", whatsapp_url, use_container_width=True)
-    
+st.link_button("🔥 SOLICITAR ASESORÍA PERSONALIZADA", f"https://wa.me/5491136768018?text={mensaje_encoded}", use_container_width=True)
